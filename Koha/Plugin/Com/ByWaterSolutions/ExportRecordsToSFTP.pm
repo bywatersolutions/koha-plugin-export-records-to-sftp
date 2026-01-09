@@ -16,15 +16,17 @@ use Net::FTP;
 use Net::SFTP::Foreign;
 use Koha::DateUtils qw( dt_from_string output_pref );
 
+our $VERSION = '1.0.0';
+
 our $metadata = {
     name            => 'Export Records to SFTP',
     author          => 'Kyle M Hall',
     description     => 'Export MARC records and upload via FTP/SFTP',
     date_authored   => '2025-01-09',
-    date_updated    => '2025-01-09',
+    date_updated    => "1900-01-01",
     minimum_version => '24.05.00.000',
     maximum_version => undef,
-    version         => '1.0.0',
+    version         => $VERSION,
 };
 
 sub new {
