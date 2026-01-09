@@ -1,0 +1,225 @@
+[% INCLUDE 'doc-head-open.inc' %]
+<title>Koha: Export Records to SFTP Plugin: Configuration</title>
+[% INCLUDE 'doc-head-close.inc' %]
+<style>
+    .job-container { border: 1px solid #ccc; padding: 1em; margin-bottom: 1em; background: #f9f9f9; }
+    .job-header { font-weight: bold; margin-bottom: 0.5em; display: flex; justify-content: space-between; align-items: center; }
+    .job-section { margin-bottom: 0.5em; }
+    .job-section label { min-width: 150px; display: inline-block; }
+</style>
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; Export Records to SFTP &rsaquo; Configuration</div>
+
+<div id="doc3" class="yui-t7">
+    <div id="bd">
+        <div id="yui-main">
+            <div class="yui-b">
+                <h1>Configuration: Export Records to SFTP</h1>
+
+                <form method="get">
+                    <input type="hidden" name="class" value="[% CLASS %]"/>
+                    <input type="hidden" name="method" value="[% METHOD %]"/>
+                    <input type="hidden" name="save" value="1"/>
+
+                    <div id="jobs">
+                        [% FOREACH job IN jobs %]
+                            <div class="job-container">
+                                <div class="job-header">
+                                    <span>Job: <input type="text" name="name_[% job.id %]" value="[% job.name | html %]" required></span>
+                                    <button type="button" class="delete-job btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</button>
+                                </div>
+                                <input type="hidden" name="job_id" value="[% job.id %]">
+                                <div class="job-section">
+                                    <label>Enabled:</label>
+                                    <input type="checkbox" name="enabled_[% job.id %]" value="1" [% IF job.enabled %]checked[% END %]>
+                                </div>
+                                <fieldset>
+                                    <legend>Export Settings</legend>
+                                    <div class="job-section">
+                                        <label>Filename pattern:</label>
+                                        <input type="text" name="filename_[% job.id %]" value="[% job.filename | html %]" placeholder="export_%Y-%m-%d.mrc">
+                                    </div>
+                                    <div class="job-section">
+                                        <label>Record Type:</label>
+                                        <select name="record_type_[% job.id %]">
+                                            <option value="bibs" [% IF job.record_type == 'bibs' %]selected[% END %]>Bibliographic</option>
+                                            <option value="auths" [% IF job.record_type == 'auths' %]selected[% END %]>Authority</option>
+                                        </select>
+                                    </div>
+                                    <div class="job-section">
+                                        <label>Format:</label>
+                                        <select name="format_[% job.id %]">
+                                            <option value="marc" [% IF job.format == 'marc' %]selected[% END %]>MARC (marc)</option>
+                                            <option value="xml" [% IF job.format == 'xml' %]selected[% END %]>MARCXML</option>
+                                            <option value="csv" [% IF job.format == 'csv' %]selected[% END %]>CSV (Biblio only)</option>
+                                        </select>
+                                    </div>
+                                    <div class="job-section">
+                                        <label>Days back:</label>
+                                        <input type="number" name="days_back_[% job.id %]" value="[% job.days_back || 1 %]" min="0">
+                                        <span class="hint">(0 for all, 1 for since yesterday)</span>
+                                    </div>
+                                    <div class="job-section">
+                                        <label>Don't export items:</label>
+                                        <input type="checkbox" name="dont_export_items_[% job.id %]" value="1" [% IF job.dont_export_items %]checked[% END %]>
+                                    </div>
+                                    <div class="job-section">
+                                        <label>Item Type:</label>
+                                        <input type="text" name="itemtype_[% job.id %]" value="[% job.itemtype | html %]">
+                                        <span class="hint">(Optional, e.g. BOOK)</span>
+                                    </div>
+                                    <div class="job-section">
+                                        <label>Report ID:</label>
+                                        <input type="text" name="report_id_[% job.id %]" value="[% job.report_id | html %]">
+                                        <span class="hint">(Optional, ID of report to select records)</span>
+                                    </div>
+                                </fieldset>
+                                <fieldset>
+                                    <legend>Remote Server</legend>
+                                    <div class="job-section">
+                                        <label>Protocol:</label>
+                                        <select name="protocol_[% job.id %]">
+                                            <option value="ftp" [% IF job.protocol == 'ftp' %]selected[% END %]>FTP</option>
+                                            <option value="sftp" [% IF job.protocol == 'sftp' %]selected[% END %]>SFTP</option>
+                                        </select>
+                                    </div>
+                                    <div class="job-section">
+                                        <label>Host:</label>
+                                        <input type="text" name="host_[% job.id %]" value="[% job.host | html %]">
+                                    </div>
+                                    <div class="job-section">
+                                        <label>Port:</label>
+                                        <input type="number" name="port_[% job.id %]" value="[% job.port | html %]" placeholder="21 or 22">
+                                    </div>
+                                    <div class="job-section">
+                                        <label>Username:</label>
+                                        <input type="text" name="username_[% job.id %]" value="[% job.username | html %]">
+                                    </div>
+                                    <div class="job-section">
+                                        <label>Password:</label>
+                                        <input type="password" name="password_[% job.id %]" value="[% job.password | html %]">
+                                    </div>
+                                    <div class="job-section">
+                                        <label>Remote Path:</label>
+                                        <input type="text" name="remote_path_[% job.id %]" value="[% job.remote_path | html %]" placeholder="/upload">
+                                    </div>
+                                </fieldset>
+                            </div>
+                        [% END %]
+                    </div>
+
+                    <button type="button" id="add-job" class="btn btn-default"><i class="fa fa-plus"></i> Add New Job</button>
+                    <hr>
+                    <input type="submit" value="Save configuration" class="btn btn-primary"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('add-job').addEventListener('click', function() {
+        var id = Date.now();
+        var html = `
+            <div class="job-container">
+                <div class="job-header">
+                    <span>Job: <input type="text" name="name_${id}" value="New Job" required></span>
+                    <button type="button" class="delete-job btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</button>
+                </div>
+                <input type="hidden" name="job_id" value="${id}">
+                <div class="job-section">
+                    <label>Enabled:</label>
+                    <input type="checkbox" name="enabled_${id}" value="1" checked>
+                </div>
+                <fieldset>
+                    <legend>Export Settings</legend>
+                    <div class="job-section">
+                        <label>Filename pattern:</label>
+                        <input type="text" name="filename_${id}" value="export_%Y-%m-%d.mrc" placeholder="export_%Y-%m-%d.mrc">
+                    </div>
+                    <div class="job-section">
+                        <label>Record Type:</label>
+                        <select name="record_type_${id}">
+                            <option value="bibs">Bibliographic</option>
+                            <option value="auths">Authority</option>
+                        </select>
+                    </div>
+                    <div class="job-section">
+                        <label>Format:</label>
+                        <select name="format_${id}">
+                            <option value="marc">MARC (marc)</option>
+                            <option value="xml">MARCXML</option>
+                            <option value="csv">CSV (Biblio only)</option>
+                        </select>
+                    </div>
+                    <div class="job-section">
+                        <label>Days back:</label>
+                        <input type="number" name="days_back_${id}" value="1" min="0">
+                        <span class="hint">(0 for all, 1 for since yesterday)</span>
+                    </div>
+                    <div class="job-section">
+                        <label>Don't export items:</label>
+                        <input type="checkbox" name="dont_export_items_${id}" value="1">
+                    </div>
+                    <div class="job-section">
+                        <label>Item Type:</label>
+                        <input type="text" name="itemtype_${id}" value="">
+                        <span class="hint">(Optional, e.g. BOOK)</span>
+                    </div>
+                    <div class="job-section">
+                        <label>Report ID:</label>
+                        <input type="number" name="report_id_${id}" value="">
+                        <span class="hint">(Optional, ID of report to select records)</span>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Remote Server</legend>
+                    <div class="job-section">
+                        <label>Protocol:</label>
+                        <select name="protocol_${id}">
+                            <option value="ftp">FTP</option>
+                            <option value="sftp">SFTP</option>
+                        </select>
+                    </div>
+                    <div class="job-section">
+                        <label>Host:</label>
+                        <input type="text" name="host_${id}" value="">
+                    </div>
+                    <div class="job-section">
+                        <label>Port:</label>
+                        <input type="number" name="port_${id}" value="" placeholder="21 or 22">
+                    </div>
+                    <div class="job-section">
+                        <label>Username:</label>
+                        <input type="text" name="username_${id}" value="">
+                    </div>
+                    <div class="job-section">
+                        <label>Password:</label>
+                        <input type="password" name="password_${id}" value="">
+                    </div>
+                    <div class="job-section">
+                        <label>Remote Path:</label>
+                        <input type="text" name="remote_path_${id}" value="" placeholder="/upload">
+                    </div>
+                </fieldset>
+            </div>
+        `;
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        document.getElementById('jobs').appendChild(div.firstElementChild);
+    });
+
+    document.getElementById('jobs').addEventListener('click', function(e) {
+        if (e.target.closest('.delete-job')) {
+            if (confirm('Are you sure you want to delete this job?')) {
+                e.target.closest('.job-container').remove();
+            }
+        }
+    });
+</script>
+
+[% INCLUDE 'intranet-bottom.inc' %]
